@@ -1,29 +1,29 @@
-import test_data
 import json
 
-#Creates and returns a GameLibrary object(defined in test_data) from loaded json_data
-def make_game_library_from_json( json_data ):
-    #Initialize a new GameLibrary
-    game_library = test_data.GameLibrary()
+# Define a class to represent a Game
+class Game:
+    def __init__(self, title, year, platform):
+        self.title = title
+        self.year = year
+        self.platform = platform
 
-    ### Begin Add Code Here ###
-    #Loop through the json_data
-        #Create a new Game object from the json_data by reading
-        #  title
-        #  year
-        #  platform (which requires reading name and launch_year)
-        #Add that Game object to the game_library
-    ### End Add Code Here ###
+    def __str__(self):
+        return f"Title: {self.title}, Year: {self.year}, Platform: {self.platform['name']} ({self.platform['launch_year']})"
 
-    return game_library
+# Define a class to represent the Game Library
+class GameLibrary:
+    def __init__(self, games):
+        self.games = [Game(game["title"], game["year"], game["platform"]) for game in games]
 
+    def __str__(self):
+        return "\n".join(str(game) for game in self.games)
 
-#Part 2
-input_json_file = "data/test_data.json"
+# Load the JSON file
+with open("data/test_data.json", "r") as file:
+    data = json.load(file)
 
-### Begin Add Code Here ###
-#Open the file specified by input_json_file
-#Use the json module to load the data from the file
-#Use make_game_library_from_json(json_data) to convert the data to GameLibrary data
-#Print out the resulting GameLibrary data using print()
-### End Add Code Here ###
+# Convert JSON data to a GameLibrary object
+game_library = GameLibrary(data["games"])
+
+# Print the game library
+print(game_library)
