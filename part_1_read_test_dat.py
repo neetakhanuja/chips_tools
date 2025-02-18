@@ -1,17 +1,16 @@
-import cc_dat_utils  # Import the cc_dat_utils module
+import cc_dat_utils
 
-# Define the input .dat file
+# Define the input .dat file (update path if needed)
 dat_file = "data/pfgd_test.dat"
 
-# Use the function to load the level pack
+# Load the level pack
 level_pack = cc_dat_utils.make_cc_level_pack_from_dat(dat_file)
 
-# Print the string representation of the level pack
-print(level_pack)
+# Print unique tile IDs from the first level
+if level_pack and level_pack.levels:
+    first_level = level_pack.levels[0]
+    unique_tile_ids = set(first_level.upper_layer)
+    print("Unique Tile IDs in pfgd_test.dat:", sorted(unique_tile_ids))
+else:
+    print("No levels found in pfgd_test.dat.")
 
-# Save the output to a text file
-output_file = "data/pfgd_test.txt"
-with open(output_file, "w") as f:
-    f.write(str(level_pack))
-
-print(f"Output saved to {output_file}")

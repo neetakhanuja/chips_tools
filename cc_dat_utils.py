@@ -287,3 +287,42 @@ def write_cc_level_pack_to_dat(cc_dat, dat_file):
         writer.write(cc_dat.level_count.to_bytes(2, cc_classes.BYTE_ORDER))
         for level in cc_dat.levels:
             write_level_to_dat(level, writer)
+
+
+def make_cc_level_pack_from_json(json_data):
+    """
+    Converts JSON data into a CCLevelPack object.
+    """
+    level_pack = cc_classes.CCLevelPack()
+
+    for level_data in json_data["level_pack"]["levels"]:
+        level = cc_classes.CCLevel()
+        level.level_number = level_data["level_number"]
+        level.time = level_data["time"]
+        level.num_chips = level_data["chip_count"]
+
+        # Add upper layer (map)
+        level.upper_layer = [item for sublist in level_data["upper_layer"] for item in sublist]
+
+        # Optional Fields
+        optional_fields = level_data.get("optional_fields", {})
+
+        if "title" in optional_fields:
+            level.add_field(cc_classes.CCMapTitleField(optional_fields["title"]))
+
+        if "hint" in optional_fields:
+            level.add_field(cc_classes.CCMapHintField(optional_fields["hint"]))
+
+        if "password" in optional_fields:
+            level.add_field(cc_classes.CCEncodedPasswordField(optional_fields["password"]))
+
+        if "monsters" in optional_fields:
+            monster_list = [cc_classes.CCCoordinate(monster[0], monster[1]) for monster in optional_fields["monsters"]]
+            level.add_field(cc_classes.CCMonsterMovementField(monster_list))
+
+        if "player_start" in level_data:
+            level.player_start = cc_classes.CCCoordinate(level_data["player_start"][0], level_data["player_start"][1])
+
+        level_pack.levels.append(level)
+
+    return level_pack
